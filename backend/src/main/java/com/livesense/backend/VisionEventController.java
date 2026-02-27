@@ -1,7 +1,6 @@
 package com.livesense.backend;
 
 import org.springframework.web.bind.annotation.*;
-import java.time.Instant;
 import java.util.List;
 
 @RestController
@@ -22,7 +21,6 @@ public class VisionEventController {
 
     @PostMapping("/events")
     public VisionEvent addEvent(@RequestBody VisionEvent event) {
-        event.setTimestamp(Instant.now());
         return repository.save(event);
     }
 }

@@ -1,111 +1,234 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>LiveSense Vision Dashboard</title>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiveSense AI Monitoring</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
 <style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
-  margin:0;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
-  background:linear-gradient(135deg,#0f172a,#1e293b);
-  color:#f8fafc;
+    font-family: 'Inter', sans-serif;
+    background: radial-gradient(circle at top left, #1f2937, #0f172a);
+    color: #e5e7eb;
+    min-height: 100vh;
+    padding: 40px;
 }
-.wrapper {
-  max-width:1000px;
-  margin:60px auto;
-  padding:20px;
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
 }
-h1 span { color:#38bdf8; }
+
+.title {
+    font-size: 32px;
+    font-weight: 700;
+}
+
+.title span {
+    color: #38bdf8;
+}
+
+.status-pill {
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.connected {
+    background: rgba(34,197,94,0.15);
+    color: #22c55e;
+}
+
+.disconnected {
+    background: rgba(239,68,68,0.15);
+    color: #ef4444;
+}
+
+.dashboard {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 30px;
+}
+
 .card {
-  background:rgba(255,255,255,0.05);
-  backdrop-filter:blur(14px);
-  border-radius:20px;
-  padding:30px;
-  box-shadow:0 20px 60px rgba(0,0,0,0.4);
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(20px);
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
 }
-.status {
-  display:flex;
-  justify-content:space-between;
-  margin-bottom:20px;
+
+.metric {
+    font-size: 40px;
+    font-weight: 700;
+    margin-top: 10px;
 }
-.online { color:#22c55e; }
-.offline { color:#ef4444; }
-.event {
-  background:#0f172a;
-  padding:15px;
-  border-radius:12px;
-  margin-bottom:12px;
-}
+
 button {
-  padding:8px 16px;
-  border-radius:8px;
-  border:none;
-  cursor:pointer;
-  margin-right:8px;
+    width: 100%;
+    padding: 12px;
+    margin-top: 15px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
 }
-.start { background:#38bdf8; }
-.stop { background:#ef4444; color:white; }
+
+.start {
+    background: #22c55e;
+    color: white;
+}
+
+.stop {
+    background: #ef4444;
+    color: white;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+.events-container {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.event {
+    background: rgba(255,255,255,0.05);
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    transition: 0.2s;
+}
+
+.event:hover {
+    background: rgba(255,255,255,0.08);
+}
+
+.event-title {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.small {
+    font-size: 13px;
+    color: #9ca3af;
+}
+
+.footer {
+    margin-top: 50px;
+    font-size: 13px;
+    color: #6b7280;
+    text-align: center;
+}
 </style>
 </head>
 
 <body>
-<div class="wrapper">
-<h1>Live<span>Sense</span> Vision Dashboard</h1>
 
-<div class="card">
-<div class="status">
-<div id="conn" class="offline">Backend: Disconnected</div>
-<div>Total Events: <span id="count">0</span></div>
+<div class="header">
+    <div class="title">Live<span>Sense</span> AI Monitoring</div>
+    <div id="status" class="status-pill disconnected">Disconnected</div>
 </div>
 
-<button class="start" onclick="start()">Start</button>
-<button class="stop" onclick="stop()">Stop</button>
+<div class="dashboard">
 
-<div id="events"></div>
+    <div class="card">
+        <div>Total Events</div>
+        <div class="metric" id="count">0</div>
+
+        <button class="start" onclick="start()">Start Monitoring</button>
+        <button class="stop" onclick="stop()">Stop Monitoring</button>
+    </div>
+
+    <div class="card">
+        <div style="font-weight:600; margin-bottom:15px;">Live Detection Events</div>
+        <div class="events-container" id="events"></div>
+    </div>
+
 </div>
+
+<div class="footer">
+LiveSense AI Vision Monitoring • Cloud Connected • Real Time Detection
 </div>
 
 <script>
-let timer=null;
-const URL="http://localhost:8080/vision/events";
+const API_URL = "https://livesense-backend.onrender.com";
 
-async function fetchEvents(){
- try{
-   const res=await fetch(URL);
-   const data=await res.json();
+let interval = null;
 
-   document.getElementById("conn").innerText="Backend: Connected";
-   document.getElementById("conn").className="online";
-   document.getElementById("count").innerText=data.length;
+async function checkBackend() {
+    try {
+        const res = await fetch(API_URL);
+        if (res.ok) {
+            document.getElementById("status").textContent = "Connected";
+            document.getElementById("status").className = "status-pill connected";
+            return true;
+        }
+    } catch (e) {}
 
-   const container=document.getElementById("events");
-   container.innerHTML="";
-
-   data.slice().reverse().forEach(e=>{
-     const div=document.createElement("div");
-     div.className="event";
-     div.innerHTML=
-       "<strong>"+e.eventType+"</strong><br>"+
-       "Confidence: "+e.confidence.toFixed(2)+"<br>"+
-       "Camera: "+e.cameraId+"<br>"+
-       "Time: "+e.timestamp;
-     container.appendChild(div);
-   });
-
- }catch{
-   document.getElementById("conn").innerText="Backend: Disconnected";
-   document.getElementById("conn").className="offline";
- }
+    document.getElementById("status").textContent = "Disconnected";
+    document.getElementById("status").className = "status-pill disconnected";
+    return false;
 }
 
-function start(){
- fetchEvents();
- timer=setInterval(fetchEvents,2000);
+async function fetchEvents() {
+    try {
+        const res = await fetch(API_URL);
+        const data = await res.json();
+
+        document.getElementById("count").textContent = data.length;
+
+        const container = document.getElementById("events");
+        container.innerHTML = "";
+
+        data.slice().reverse().forEach(e => {
+            const div = document.createElement("div");
+            div.className = "event";
+            div.innerHTML = `
+                <div class="event-title">${e.eventType}</div>
+                <div class="small">Camera: ${e.cameraId}</div>
+                <div class="small">Confidence: ${e.confidence}</div>
+                <div class="small">Time: ${e.timestamp}</div>
+            `;
+            container.appendChild(div);
+        });
+
+    } catch (e) {
+        document.getElementById("status").textContent = "Disconnected";
+        document.getElementById("status").className = "status-pill disconnected";
+    }
 }
 
-function stop(){
- clearInterval(timer);
+function start() {
+    if (interval) return;
+    checkBackend().then(alive => {
+        if (alive) {
+            fetchEvents();
+            interval = setInterval(fetchEvents, 3000);
+        }
+    });
 }
+
+function stop() {
+    clearInterval(interval);
+    interval = null;
+}
+
+checkBackend();
 </script>
+
 </body>
 </html>
