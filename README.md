@@ -1,78 +1,157 @@
-# LiveSense
+# LiveSense AI Monitoring System
 
-LiveSense is a real time Vision AI agent built for the Vision AI Hackathon.
-The goal of this project is to explore how AI systems can observe live video, understand context, and generate meaningful responses with low latency.
+LiveSense is a real time AI powered vision monitoring system that detects objects using computer vision and converts them into structured detection events.
 
-This project focuses on system design, realtime processing, and practical multimodal AI integration rather than just running a demo.
+Instead of just showing a video feed, LiveSense transforms visual data into meaningful events that can be stored, tracked and monitored through a live dashboard.
 
-## Hackathon Context
+This project demonstrates a complete AI pipeline from camera to dashboard.
 
-This project is being built as part of the Vision AI Hackathon by WeMakeDevs.
+---
 
-Hackathon link
-[https://www.wemakedevs.org/hackathons/vision](https://www.wemakedevs.org/hackathons/vision)
+## The Idea
 
-## Core Idea
+Most surveillance systems only record video.
+They do not understand what is happening.
 
-Most AI applications work with static inputs such as text or images.
-LiveSense experiments with continuous video input where context evolves constantly.
+LiveSense adds intelligence on top of video by:
 
-The system captures live camera frames, processes them using vision models, reasons over context using an AI agent, and produces realtime responses.
+* Detecting objects in real time
+* Generating structured detection events
+* Storing them in a backend system
+* Displaying them on a live dashboard
 
-## Architecture Overview
+It bridges computer vision with backend engineering.
 
-LiveSense follows a layered backend style architecture.
+---
 
-Input Layer
-Handles camera capture and frame throttling to balance performance and accuracy.
+## How It Works
 
-Vision Processing Layer
-Processes frames using vision models to extract structured visual context.
+The system follows a clean modular architecture:
 
-Agent Layer
-Uses Vision Agents SDK to combine visual understanding with reasoning logic.
+Camera
+→ YOLOv8 AI engine (Python)
+→ Spring Boot REST API
+→ H2 Database
+→ Live Dashboard
 
-Output Layer
-Generates responses that can be text based, spoken, or visual overlays.
+Each layer is independent and scalable.
 
-Control Layer
-Manages configuration, latency tuning, logging, and debugging.
+The AI engine detects objects and sends structured JSON events to the backend.
+The backend stores events in a database.
+The dashboard polls the backend and displays live detection activity.
+
+---
 
 ## Tech Stack
 
-Python
-Vision Agents SDK
-Realtime camera streaming
-Vision models for frame understanding
-Optional speech processing support
+Backend
 
-## Inspiration and Attribution
+* Java 17
+* Spring Boot
+* Spring Data JPA
+* H2 In Memory Database
 
-This project was inspired by realtime webcam vision demos such as:
+AI Engine
 
-https://github.com/ngxson/smolvlm-realtime-webcam
+* Python 3
+* Ultralytics YOLOv8
+* OpenCV
 
-LiveSense is a ground up reimplementation focused on architecture clarity, Vision Agents integration, and hackathon specific experimentation.
+Frontend
 
-## What Is Different Here
+* HTML
+* Modern CSS
+* REST API polling
 
-Clear backend oriented architecture instead of a single demo script
-Integration with Vision Agents ecosystem
-Focus on realtime system constraints such as latency and context continuity
-Experimentation toward practical use cases instead of only visual demos
+---
 
-## Current Status
+## Project Structure
 
-Active development during the hackathon.
-Architecture evolving with ongoing experimentation and performance tuning.
+LiveSense
+backend
+vision
+index.html
 
-## Future Scope
+The backend handles event storage.
+The vision module handles AI detection.
+The dashboard visualizes events in real time.
 
-Realtime scene understanding assistants
-Security and monitoring applications
-Accessibility tools
-Interactive AI overlays for live environments
+---
 
-## Author
+## How To Run
 
-Shivansh Bagga
+Step 1: Start Backend
+
+cd backend
+./mvnw clean spring-boot:run
+
+Open in browser:
+[http://localhost:8080/vision/events](http://localhost:8080/vision/events)
+
+If you see an empty JSON array, backend is running correctly.
+
+---
+
+Step 2: Start AI Vision Engine
+
+cd vision
+python3 vision.py
+
+Your camera window will open.
+When objects are detected, events will be sent to the backend.
+
+---
+
+Step 3: Start Dashboard
+
+From project root:
+
+python3 -m http.server 5500
+
+Open in browser:
+[http://localhost:5500](http://localhost:5500)
+
+Click Start.
+You will see live detection events updating in the dashboard.
+
+---
+
+## Example Event
+
+{
+"cameraId": "cam01",
+"eventType": "personDetected",
+"confidence": 0.92,
+"timestamp": "2026-02-27T11:57:24.228990Z"
+}
+
+---
+
+## Key Highlights
+
+* Real time object detection
+* Event based backend processing
+* Database persistence
+* Clean modular architecture
+* Modern monitoring dashboard
+* Clear separation of concerns
+
+This is not just object detection.
+It is a complete AI monitoring pipeline.
+
+---
+
+## Future Improvements
+
+* WebSocket real time streaming
+* Multi camera support
+* Cloud deployment
+* Alert system integration
+* Analytics dashboard
+* Gesture based controls
+
+---
+
+LiveSense demonstrates how AI can move beyond experimentation and integrate into real backend systems.
+
+Built by Shivansh Bagga
