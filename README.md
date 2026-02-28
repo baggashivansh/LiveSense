@@ -1,157 +1,108 @@
-# LiveSense AI Monitoring System
+# LiveSense
 
-LiveSense is a real time AI powered vision monitoring system that detects objects using computer vision and converts them into structured detection events.
+LiveSense is a real time ambient sensing system that combines computer vision with a backend event processing service.
 
-Instead of just showing a video feed, LiveSense transforms visual data into meaningful events that can be stored, tracked and monitored through a live dashboard.
+The intention behind this project is simple: move beyond isolated object detection and toward context aware environmental intelligence.
 
-This project demonstrates a complete AI pipeline from camera to dashboard.
-
----
-
-## The Idea
-
-Most surveillance systems only record video.
-They do not understand what is happening.
-
-LiveSense adds intelligence on top of video by:
-
-* Detecting objects in real time
-* Generating structured detection events
-* Storing them in a backend system
-* Displaying them on a live dashboard
-
-It bridges computer vision with backend engineering.
+Instead of treating vision models as standalone demos, LiveSense explores what happens when perception becomes continuous — when observations are captured, interpreted, structured, and transmitted as meaningful events. The focus is not just detection, but understanding and integration.
 
 ---
 
-## How It Works
+## 🌐 Live Deployment
 
-The system follows a clean modular architecture:
+Monitoring Interface
+[https://live-sense.vercel.app](https://live-sense.vercel.app)
 
-Camera
-→ YOLOv8 AI engine (Python)
-→ Spring Boot REST API
-→ H2 Database
-→ Live Dashboard
+Backend Service
+[https://livesense-backend.onrender.com/](https://livesense-backend.onrender.com/)
 
-Each layer is independent and scalable.
-
-The AI engine detects objects and sends structured JSON events to the backend.
-The backend stores events in a database.
-The dashboard polls the backend and displays live detection activity.
+The live interface verifies backend availability and demonstrates real time cloud connectivity between independently deployed services.
 
 ---
 
-## Tech Stack
+## 🧠 What the System Does
 
-Backend
+LiveSense observes the physical environment through a camera feed.
 
-* Java 17
-* Spring Boot
-* Spring Data JPA
-* H2 In Memory Database
+A vision model detects objects such as people.
+Temporal logic evaluates whether a detection is meaningful — for example, distinguishing a brief appearance from sustained presence.
 
-AI Engine
+When defined conditions are met, structured events are transmitted to a backend service.
 
-* Python 3
-* Ultralytics YOLOv8
-* OpenCV
+The backend receives these events and provides a foundation for future storage, reasoning, analytics, or automation.
 
-Frontend
-
-* HTML
-* Modern CSS
-* REST API polling
+In essence, LiveSense acts as a perception layer for building context aware applications.
 
 ---
 
-## Project Structure
+## 🏗 Architecture Overview
 
-LiveSense
-backend
-vision
-index.html
+LiveSense is organized into three clear layers:
 
-The backend handles event storage.
-The vision module handles AI detection.
-The dashboard visualizes events in real time.
+### Vision Sensing Layer
 
----
+A Python based service using OpenCV and YOLO.
+Captures live camera frames.
+Performs object detection.
+Tracks detection duration to identify meaningful presence.
 
-## How To Run
+### Event Transmission Layer
 
-Step 1: Start Backend
+Structured JSON events.
+HTTP based communication.
+Instead of sending raw video, the system transmits interpreted observations.
 
-cd backend
-./mvnw clean spring-boot:run
+### Backend Processing Layer
 
-Open in browser:
-[http://localhost:8080/vision/events](http://localhost:8080/vision/events)
+Spring Boot application.
+Receives typed events.
+Designed to evolve into a persistence, reasoning, and automation layer.
 
-If you see an empty JSON array, backend is running correctly.
-
----
-
-Step 2: Start AI Vision Engine
-
-cd vision
-python3 vision.py
-
-Your camera window will open.
-When objects are detected, events will be sent to the backend.
+The monitoring interface hosted on Vercel validates backend availability and demonstrates cross platform cloud communication in a distributed setup.
 
 ---
 
-Step 3: Start Dashboard
+## ⚙️ Current Capabilities
 
-From project root:
-
-python3 -m http.server 5500
-
-Open in browser:
-[http://localhost:5500](http://localhost:5500)
-
-Click Start.
-You will see live detection events updating in the dashboard.
+* Real time person detection
+* Continuous presence evaluation based on duration
+* Event based communication between vision and backend
+* Structured event ingestion on backend
+* Cloud deployment across independent platforms
 
 ---
 
-## Example Event
+## 🔭 Why This Project Exists
 
-{
-"cameraId": "cam01",
-"eventType": "personDetected",
-"confidence": 0.92,
-"timestamp": "2026-02-27T11:57:24.228990Z"
-}
+Many AI projects stop at showcasing model accuracy.
 
----
+LiveSense focuses on system integration.
 
-## Key Highlights
+Real intelligence does not emerge from isolated predictions.
+It emerges from continuous sensing, temporal reasoning, memory, and structured decision pipelines.
 
-* Real time object detection
-* Event based backend processing
-* Database persistence
-* Clean modular architecture
-* Modern monitoring dashboard
-* Clear separation of concerns
-
-This is not just object detection.
-It is a complete AI monitoring pipeline.
+This project is a foundational step toward ambient computing systems where digital services adapt dynamically to real world context.
 
 ---
 
-## Future Improvements
+## 🔍 Broader Exploration
 
-* WebSocket real time streaming
-* Multi camera support
-* Cloud deployment
-* Alert system integration
-* Analytics dashboard
-* Gesture based controls
+LiveSense is part of a deeper exploration into vision systems and intelligent agents.
+
+Related article:
+[https://baggashivansh.hashnode.dev/building-realtime-vision-ai-with-vision-agents](https://baggashivansh.hashnode.dev/building-realtime-vision-ai-with-vision-agents)
+
+The article expands on the architectural thinking behind real time perception systems and how they can evolve into intelligent agent driven environments.
 
 ---
 
-LiveSense demonstrates how AI can move beyond experimentation and integrate into real backend systems.
+## 🚀 Project Status
 
-Built by Shivansh Bagga
+LiveSense is currently in an experimental phase focused on validating architecture and cloud connectivity.
+
+The core sensing and event transmission pipeline is operational.
+Future work will focus on persistence, reasoning layers, and intelligent automation.
+
+---
+
+Built by **Shivansh Bagga**

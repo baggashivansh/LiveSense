@@ -14,23 +14,23 @@
 }
 
 body {
-    background: linear-gradient(to bottom right, #f9fbff, #eef4ff);
+    background: linear-gradient(to bottom right, #f8fbff, #edf3ff);
     color: #111827;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
 }
 
-/* Subtle animated blue background glow */
+/* Subtle animated glow */
 body::before {
     content: "";
     position: fixed;
-    top: -200px;
-    right: -200px;
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, rgba(59,130,246,0.12), transparent 70%);
-    animation: floatGlow 10s ease-in-out infinite alternate;
+    top: -250px;
+    right: -250px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(59,130,246,0.15), transparent 70%);
+    animation: floatGlow 12s ease-in-out infinite alternate;
     z-index: -1;
 }
 
@@ -38,12 +38,12 @@ body::before {
 
 header {
     text-align: center;
-    padding: 90px 20px 40px;
+    padding: 100px 20px 50px;
     animation: fadeIn 0.8s ease forwards;
 }
 
 header h1 {
-    font-size: 42px;
+    font-size: 44px;
     font-weight: 600;
     letter-spacing: -1px;
 }
@@ -53,12 +53,12 @@ header span {
 }
 
 header p {
-    margin-top: 12px;
+    margin-top: 14px;
     color: #6b7280;
     font-size: 17px;
 }
 
-/* Card */
+/* Main */
 
 .main {
     flex: 1;
@@ -68,12 +68,15 @@ header p {
     padding: 40px 20px;
 }
 
+/* Card */
+
 .card {
-    background: white;
-    padding: 50px 40px;
-    border-radius: 16px;
-    width: 420px;
-    box-shadow: 0 10px 35px rgba(59,130,246,0.08);
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(14px);
+    padding: 55px 45px;
+    border-radius: 20px;
+    width: 440px;
+    box-shadow: 0 15px 50px rgba(59,130,246,0.12);
     text-align: center;
     transition: all 0.3s ease;
     animation: slideUp 0.8s ease forwards;
@@ -81,25 +84,41 @@ header p {
 
 .card:hover {
     transform: translateY(-6px);
-    box-shadow: 0 18px 45px rgba(59,130,246,0.15);
+    box-shadow: 0 25px 65px rgba(59,130,246,0.18);
 }
+
+/* Status */
 
 .status {
     font-size: 18px;
-    margin-bottom: 25px;
+    margin-bottom: 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
 }
 
-.status span {
-    font-weight: 600;
-    color: #9ca3af;
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #9ca3af;
+    transition: all 0.3s ease;
 }
+
+.status-text {
+    font-weight: 600;
+    color: #6b7280;
+}
+
+/* Button */
 
 button {
     background: #3b82f6;
     color: white;
     border: none;
-    padding: 12px 28px;
-    border-radius: 8px;
+    padding: 13px 30px;
+    border-radius: 10px;
     font-size: 14px;
     cursor: pointer;
     transition: all 0.25s ease;
@@ -108,7 +127,12 @@ button {
 button:hover {
     background: #2563eb;
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(59,130,246,0.3);
+    box-shadow: 0 10px 25px rgba(59,130,246,0.3);
+}
+
+button:disabled {
+    background: #94a3b8;
+    cursor: not-allowed;
 }
 
 /* Footer */
@@ -118,7 +142,7 @@ footer {
     padding: 25px;
     font-size: 14px;
     color: #6b7280;
-    background: rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.6);
     backdrop-filter: blur(8px);
     border-top: 1px solid #e5e7eb;
 }
@@ -142,7 +166,7 @@ footer span {
 
 @keyframes floatGlow {
     from { transform: translateY(0px); }
-    to { transform: translateY(40px); }
+    to { transform: translateY(50px); }
 }
 </style>
 </head>
@@ -157,9 +181,10 @@ footer span {
 <div class="main">
     <div class="card">
         <div class="status">
-            Backend Status: <span id="status">Checking...</span>
+            <div id="dot" class="status-dot"></div>
+            <div id="statusText" class="status-text">Checking...</div>
         </div>
-        <button onclick="checkHealth()">Check Health</button>
+        <button id="checkBtn" onclick="checkHealth()">Check Health</button>
     </div>
 </div>
 
@@ -168,27 +193,38 @@ footer span {
 </footer>
 
 <script>
-const backendUrl = "https://livesense-backend.onrender.com/health";
+const backendUrl = "https://livesense-backend.onrender.com/";
 
 async function checkHealth() {
-    const statusElement = document.getElementById("status");
-    statusElement.innerText = "Loading...";
+    const statusText = document.getElementById("statusText");
+    const dot = document.getElementById("dot");
+    const button = document.getElementById("checkBtn");
+
+    statusText.innerText = "Checking...";
+    dot.style.background = "#9ca3af";
+    button.disabled = true;
 
     try {
         const response = await fetch(backendUrl);
+
+        if (!response.ok) throw new Error();
+
         const text = await response.text();
 
-        if (text === "OK") {
-            statusElement.innerText = "Healthy";
-            statusElement.style.color = "#10b981";
+        if (text.includes("running")) {
+            statusText.innerText = "Online";
+            dot.style.background = "#10b981";
         } else {
-            statusElement.innerText = "Unexpected";
-            statusElement.style.color = "#f59e0b";
+            statusText.innerText = "Unexpected";
+            dot.style.background = "#f59e0b";
         }
+
     } catch (error) {
-        statusElement.innerText = "Offline";
-        statusElement.style.color = "#ef4444";
+        statusText.innerText = "Offline";
+        dot.style.background = "#ef4444";
     }
+
+    button.disabled = false;
 }
 
 window.onload = checkHealth;
