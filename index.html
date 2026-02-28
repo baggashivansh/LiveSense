@@ -2,232 +2,196 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<title>LiveSense Vision</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LiveSense AI Monitoring</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 body {
-    font-family: 'Inter', sans-serif;
-    background: radial-gradient(circle at top left, #1f2937, #0f172a);
-    color: #e5e7eb;
+    background: linear-gradient(to bottom right, #f9fbff, #eef4ff);
+    color: #111827;
     min-height: 100vh;
-    padding: 40px;
-}
-
-.header {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 40px;
+    flex-direction: column;
 }
 
-.title {
-    font-size: 32px;
-    font-weight: 700;
+/* Subtle animated blue background glow */
+body::before {
+    content: "";
+    position: fixed;
+    top: -200px;
+    right: -200px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(59,130,246,0.12), transparent 70%);
+    animation: floatGlow 10s ease-in-out infinite alternate;
+    z-index: -1;
 }
 
-.title span {
-    color: #38bdf8;
+/* Header */
+
+header {
+    text-align: center;
+    padding: 90px 20px 40px;
+    animation: fadeIn 0.8s ease forwards;
 }
 
-.status-pill {
-    padding: 8px 16px;
-    border-radius: 999px;
-    font-size: 14px;
+header h1 {
+    font-size: 42px;
     font-weight: 600;
+    letter-spacing: -1px;
 }
 
-.connected {
-    background: rgba(34,197,94,0.15);
-    color: #22c55e;
+header span {
+    color: #3b82f6;
 }
 
-.disconnected {
-    background: rgba(239,68,68,0.15);
-    color: #ef4444;
+header p {
+    margin-top: 12px;
+    color: #6b7280;
+    font-size: 17px;
 }
 
-.dashboard {
-    display: grid;
-    grid-template-columns: 300px 1fr;
-    gap: 30px;
+/* Card */
+
+.main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
 }
 
 .card {
-    background: rgba(255,255,255,0.05);
-    backdrop-filter: blur(20px);
+    background: white;
+    padding: 50px 40px;
     border-radius: 16px;
-    padding: 25px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    width: 420px;
+    box-shadow: 0 10px 35px rgba(59,130,246,0.08);
+    text-align: center;
+    transition: all 0.3s ease;
+    animation: slideUp 0.8s ease forwards;
 }
 
-.metric {
-    font-size: 40px;
-    font-weight: 700;
-    margin-top: 10px;
+.card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 45px rgba(59,130,246,0.15);
 }
 
-button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 15px;
-    border-radius: 8px;
-    border: none;
+.status {
+    font-size: 18px;
+    margin-bottom: 25px;
+}
+
+.status span {
     font-weight: 600;
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-.start {
-    background: #22c55e;
-    color: white;
-}
-
-.stop {
-    background: #ef4444;
-    color: white;
-}
-
-button:hover {
-    opacity: 0.9;
-}
-
-.events-container {
-    max-height: 500px;
-    overflow-y: auto;
-}
-
-.event {
-    background: rgba(255,255,255,0.05);
-    padding: 15px;
-    border-radius: 10px;
-    margin-bottom: 15px;
-    transition: 0.2s;
-}
-
-.event:hover {
-    background: rgba(255,255,255,0.08);
-}
-
-.event-title {
-    font-weight: 600;
-    margin-bottom: 5px;
-}
-
-.small {
-    font-size: 13px;
     color: #9ca3af;
 }
 
-.footer {
-    margin-top: 50px;
-    font-size: 13px;
-    color: #6b7280;
+button {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+button:hover {
+    background: #2563eb;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(59,130,246,0.3);
+}
+
+/* Footer */
+
+footer {
     text-align: center;
+    padding: 25px;
+    font-size: 14px;
+    color: #6b7280;
+    background: rgba(255,255,255,0.7);
+    backdrop-filter: blur(8px);
+    border-top: 1px solid #e5e7eb;
+}
+
+footer span {
+    font-weight: 600;
+    color: #3b82f6;
+}
+
+/* Animations */
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(25px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes floatGlow {
+    from { transform: translateY(0px); }
+    to { transform: translateY(40px); }
 }
 </style>
 </head>
 
 <body>
 
-<div class="header">
-    <div class="title">Live<span>Sense</span> AI Monitoring</div>
-    <div id="status" class="status-pill disconnected">Disconnected</div>
-</div>
+<header>
+    <h1>Live<span>Sense</span> Vision</h1>
+    <p>Intelligent Cloud Event System</p>
+</header>
 
-<div class="dashboard">
-
+<div class="main">
     <div class="card">
-        <div>Total Events</div>
-        <div class="metric" id="count">0</div>
-
-        <button class="start" onclick="start()">Start Monitoring</button>
-        <button class="stop" onclick="stop()">Stop Monitoring</button>
+        <div class="status">
+            Backend Status: <span id="status">Checking...</span>
+        </div>
+        <button onclick="checkHealth()">Check Health</button>
     </div>
-
-    <div class="card">
-        <div style="font-weight:600; margin-bottom:15px;">Live Detection Events</div>
-        <div class="events-container" id="events"></div>
-    </div>
-
 </div>
 
-<div class="footer">
-LiveSense AI Vision Monitoring • Cloud Connected • Real Time Detection
-</div>
+<footer>
+    Built by <span>Shivansh Bagga</span>
+</footer>
 
 <script>
-const API_URL = "https://livesense-backend.onrender.com";
+const backendUrl = "https://livesense-backend.onrender.com/health";
 
-let interval = null;
+async function checkHealth() {
+    const statusElement = document.getElementById("status");
+    statusElement.innerText = "Loading...";
 
-async function checkBackend() {
     try {
-        const res = await fetch(API_URL);
-        if (res.ok) {
-            document.getElementById("status").textContent = "Connected";
-            document.getElementById("status").className = "status-pill connected";
-            return true;
+        const response = await fetch(backendUrl);
+        const text = await response.text();
+
+        if (text === "OK") {
+            statusElement.innerText = "Healthy";
+            statusElement.style.color = "#10b981";
+        } else {
+            statusElement.innerText = "Unexpected";
+            statusElement.style.color = "#f59e0b";
         }
-    } catch (e) {}
-
-    document.getElementById("status").textContent = "Disconnected";
-    document.getElementById("status").className = "status-pill disconnected";
-    return false;
-}
-
-async function fetchEvents() {
-    try {
-        const res = await fetch(API_URL);
-        const data = await res.json();
-
-        document.getElementById("count").textContent = data.length;
-
-        const container = document.getElementById("events");
-        container.innerHTML = "";
-
-        data.slice().reverse().forEach(e => {
-            const div = document.createElement("div");
-            div.className = "event";
-            div.innerHTML = `
-                <div class="event-title">${e.eventType}</div>
-                <div class="small">Camera: ${e.cameraId}</div>
-                <div class="small">Confidence: ${e.confidence}</div>
-                <div class="small">Time: ${e.timestamp}</div>
-            `;
-            container.appendChild(div);
-        });
-
-    } catch (e) {
-        document.getElementById("status").textContent = "Disconnected";
-        document.getElementById("status").className = "status-pill disconnected";
+    } catch (error) {
+        statusElement.innerText = "Offline";
+        statusElement.style.color = "#ef4444";
     }
 }
 
-function start() {
-    if (interval) return;
-    checkBackend().then(alive => {
-        if (alive) {
-            fetchEvents();
-            interval = setInterval(fetchEvents, 3000);
-        }
-    });
-}
-
-function stop() {
-    clearInterval(interval);
-    interval = null;
-}
-
-checkBackend();
+window.onload = checkHealth;
 </script>
 
 </body>
