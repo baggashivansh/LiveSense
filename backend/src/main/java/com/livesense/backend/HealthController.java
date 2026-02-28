@@ -11,7 +11,7 @@ import java.util.Map;
 @CrossOrigin(origins = "*")
 public class HealthController {
 
-    @GetMapping("/")
+    @GetMapping("/health")
     public Map<String, Object> health() {
         return Map.of(
                 "status", "UP",
