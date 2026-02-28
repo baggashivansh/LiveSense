@@ -209,9 +209,9 @@ async function checkHealth() {
 
         if (!response.ok) throw new Error();
 
-        const text = await response.text();
+        const data = await response.json();
 
-        if (text.includes("running")) {
+        if (data.status === "UP") {
             statusText.innerText = "Online";
             dot.style.background = "#10b981";
         } else {
